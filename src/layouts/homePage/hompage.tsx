@@ -1,14 +1,29 @@
 import React from "react";
 import Banner from "./components/Banner";
 import Carousel from "./components/Carousel";
-import List from "../products/List";
+import DanhSachSanPham from "../products/danhSachSanPham";
+import {useParams} from "react-router-dom";
+import ChiTietSanPham from "../products/chiTietSanPham";
+interface HomePageProps{
+    tuKhoaTimKiem:string
+}
+function HomePage({tuKhoaTimKiem}:HomePageProps){
+    const {maTheLoai}=useParams();
+    let maTheLoaiNumBer=0;
+    try{
+        maTheLoaiNumBer=parseInt(maTheLoai+'');
 
-function HomePage(){
+    }catch (error){
+        maTheLoaiNumBer=0;
+        console.log(error);
+    }
+    if(Number.isNaN(maTheLoaiNumBer))
+        maTheLoaiNumBer=0;
     return(
         <div>
             <Banner />
             <Carousel/>
-            <List />
+            <DanhSachSanPham tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={maTheLoaiNumBer}/>
         </div>
     );
 }
