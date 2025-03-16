@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Router, Routes} from "react-router-dom";
 import Navbar from "./layouts/header-footer/NarBar";
 import HomePage from "./layouts/homePage/hompage";
 import About from "./layouts/about/About";
@@ -11,7 +11,12 @@ import DangNhap from "./layouts/nguoiDung/dangNhap";
 import Test from "./layouts/nguoiDung/text";
 import SachForm from "./layouts/admin/sachForm";
 import Footer from "./layouts/header-footer/Footer";
-import DashboardPage from "./layouts/admin/trangDieuKhien";
+import Home from "./Home";
+import StudentsView from "./Student/student/StudentsView";
+import AddStudent from "./Student/student/AddStudent";
+import EditStudent from "./Student/student/EditStudent";
+import StudentPofile from "./Student/student/StudentPofile";
+// import DashboardPage from "./layouts/admin/trangDieuKhien";
 
 
 function App() {
@@ -31,8 +36,30 @@ function App() {
             <Route path='/dang-nhap' element={<DangNhap />} />
             <Route path='/test' element={<Test />} />
             <Route path='/admin/them-sach' element={<SachForm />} />
-            <Route path='/admin' element={<DashboardPage />} />
+            {/*<Route path='/admin' element={<DashboardPage />} />*/}
+            {/*//student*/}
+            <Route
+                // exact
+                path="/"
+                element={<Home />}></Route>
+            <Route
+
+                path="/view-students"
+                element={<StudentsView />}></Route>
+            <Route
+
+                path="/add-students"
+                element={<AddStudent />}></Route>
+            <Route
+
+                path="/edit-student/:id"
+                element={<EditStudent />}></Route>
+            <Route
+
+                path="/student-profile/:id"
+                element={<StudentPofile />}></Route>
           </Routes>
+
           <Footer/>
         </BrowserRouter>
       </div>

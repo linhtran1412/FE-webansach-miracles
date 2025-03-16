@@ -65,6 +65,26 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                                 <li><a className="dropdown-item" href="#">Quy định 3</a></li>
                             </ul>
                         </li>
+                        <li className="nav-item dropdown">
+                            <NavLink className="navbar-brand" to={"/"}>
+                                SBR Demo
+                            </NavLink>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <NavLink
+                                className="nav-link active"
+                                aria-current="page"
+                                to={"/view-students"}>
+                                View All Student
+                            </NavLink>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <NavLink
+                                className="nav-link"
+                                to={"/add-students"}>
+                                Add new Students
+                            </NavLink>
+                        </li>
                         <li className="nav-item">
                             <NavLink className="nav-link" to="#">Liên hệ</NavLink>
                         </li>

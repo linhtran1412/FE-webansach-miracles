@@ -20,7 +20,7 @@ function DanhSachSanPham({ tuKhoaTimKiem ,maTheLoai}: DanhSachSanPhamProps) {
     const [tongSoSach, setSoSach] = useState(0);
 
     useEffect(() => {
-        if (tuKhoaTimKiem === ''&&maTheLoai==0 ) {
+        if (tuKhoaTimKiem === '' &&maTheLoai==0 ) {
             layToanBoSach(trangHienTai - 1).then(
                 kq => {
                     setDanhSachQuyenSach(kq.ketQua);

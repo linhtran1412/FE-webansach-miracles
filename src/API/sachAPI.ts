@@ -27,7 +27,7 @@ async function laySach(duongDan: string): Promise<KetQuaInterface> {
             tenSach: responseData[key].tenSach,
             giaBan: responseData[key].giaBan,
             giaNiemYet: responseData[key].giaNiemYet,
-            // moTa:responseData[key].moTa,
+            moTa:responseData[key].moTa,
             soLuong:responseData[key].soLuong,
             tenTacGia:responseData[key].tenTacGia,
             trungBinhXepHang:responseData[key].trungBinhXepHang
