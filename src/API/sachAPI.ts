@@ -1,4 +1,4 @@
-import React from "react";
+import React, {FormEvent} from "react";
 import sachModel from "../models/sachModel";
 import {request} from "./request";
 interface KetQuaInterface{
@@ -45,6 +45,8 @@ export async function layToanBoSach(trang:number): Promise<KetQuaInterface> {
     return laySach(duongDan);
 
 }
+
+
 
 export async function lay3SachMoiNhat(): Promise<KetQuaInterface> {
 

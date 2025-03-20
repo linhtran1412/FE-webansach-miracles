@@ -11,32 +11,42 @@ import DangNhap from "./layouts/nguoiDung/dangNhap";
 import Test from "./layouts/nguoiDung/text";
 import SachForm from "./layouts/admin/sachForm";
 import Footer from "./layouts/header-footer/Footer";
+import {layToanBoHocSinh} from "./API/HocSinhAPI";
+import AdminPage from "./layouts/admin/ADPage/AdminPage";
+import ViewStudent from "./layouts/admin/student/ViewStudent";
+
 
 
 
 function App() {
   const [tuKhoaTimKiem, setTuKhoaTimKiem] = useState('');
-
+  layToanBoHocSinh().then().catch();
   return (
-      <div className='App'>
-        <BrowserRouter>
-          <Navbar tuKhoaTimKiem={tuKhoaTimKiem}  setTuKhoaTimKiem={setTuKhoaTimKiem}/>
-          <Routes>
-            <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-            <Route path='/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-            <Route path='/about' element={<About />} />
-            <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
-            <Route path='/dang-ky' element={<DangKyNguoiDung />} />
-            <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan/>} />
-            <Route path='/dang-nhap' element={<DangNhap />} />
-            <Route path='/test' element={<Test />} />
-            <Route path='/admin/them-sach' element={<SachForm />} />
-          </Routes>
 
-          <Footer/>
-        </BrowserRouter>
-      </div>
-  );
+    <div className='App'>
+ <BrowserRouter>
+   <Navbar tuKhoaTimKiem={tuKhoaTimKiem}  setTuKhoaTimKiem={setTuKhoaTimKiem}/>
+   <Routes>
+   <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+     <Route path='/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+      <Route path='/about' element={<About />} />
+    <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
+    <Route path='/dang-ky' element={<DangKyNguoiDung />} />
+    <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan/>} />
+    <Route path='/dang-nhap' element={<DangNhap />} />
+    <Route path='/test' element={<Test />} />
+
+     <Route path='/admin/them-sach' element={<SachForm />} />
+
+
+       <Route path='/admin' element={<AdminPage />} />
+       <Route path='/view-students' element={<ViewStudent />} />
+  </Routes>
+
+  <Footer/>
+  </BrowserRouter>
+ </div>
+   );
 }
 
 export default App;
