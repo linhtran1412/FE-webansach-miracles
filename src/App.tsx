@@ -11,39 +11,43 @@ import DangNhap from "./layouts/nguoiDung/dangNhap";
 import Test from "./layouts/nguoiDung/text";
 import SachForm from "./layouts/admin/sachForm";
 import Footer from "./layouts/header-footer/Footer";
-import {layToanBoHocSinh} from "./API/HocSinhAPI";
-import AdminPage from "./layouts/admin/ADPage/AdminPage";
-import ViewStudent from "./layouts/admin/student/ViewStudent";
-
-
-
+import ADPage from "./LayoutAD/ADPage/ADPage";
+import NavBarAD from "./LayoutAD/header-footer_AD/Narbar_AD";
 
 function App() {
   const [tuKhoaTimKiem, setTuKhoaTimKiem] = useState('');
-  layToanBoHocSinh().then().catch();
-  return (
+    const isAdminPath = location.pathname.startsWith("/admin");
+    // eslint-disable-next-line no-restricted-globals
+
+    return (
 
     <div className='App'>
  <BrowserRouter>
-   <Navbar tuKhoaTimKiem={tuKhoaTimKiem}  setTuKhoaTimKiem={setTuKhoaTimKiem}/>
-   <Routes>
-   <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-     <Route path='/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-      <Route path='/about' element={<About />} />
-    <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
-    <Route path='/dang-ky' element={<DangKyNguoiDung />} />
-    <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan/>} />
-    <Route path='/dang-nhap' element={<DangNhap />} />
-    <Route path='/test' element={<Test />} />
+     {isAdminPath ? <NavBarAD /> : <Navbar tuKhoaTimKiem={tuKhoaTimKiem} setTuKhoaTimKiem={setTuKhoaTimKiem} />}
 
-     <Route path='/admin/them-sach' element={<SachForm />} />
+     {!isAdminPath ?
+         <Routes>
 
 
-       <Route path='/admin' element={<AdminPage />} />
-       <Route path='/view-students' element={<ViewStudent />} />
-  </Routes>
+         <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+         <Route path='/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+         <Route path='/about' element={<About />} />
+         <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
+             <Route path='/dang-ky' element={<DangKyNguoiDung />} />
+             <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan/>} />
+             <Route path='/dang-nhap' element={<DangNhap />} />
+         <Route path='/test' element={<Test />} />
+         <Route path='/admin/them-sach' element={<SachForm />} />
 
-  <Footer/>
+     </Routes>
+         :
+
+         <Routes>
+
+         <Route path='/admin' element={<ADPage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+     </Routes> }
+
+     <Footer/>
   </BrowserRouter>
  </div>
    );

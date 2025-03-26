@@ -1,14 +1,19 @@
-import React, {FormEvent} from "react";
-import sachModel from "../models/sachModel";
+
+import React from "react";
+
 import {request} from "./request";
+import SachModel from "../models/sachModel";
+import sachModel from "../models/sachModel";
+
+
 interface KetQuaInterface{
-    ketQua: sachModel[];
-    tongSoTrang:number;
-    tongSoSach:number;
+    ketQua: SachModel[];
+    tongSoTrang: number;
+    tongSoSach: number;
 }
 
 async function laySach(duongDan: string): Promise<KetQuaInterface> {
-    const ketQua: sachModel[] = [];
+    const ketQua: SachModel[] = [];
 
     // Gọi phương thức request
     const response = await request(duongDan);
@@ -16,10 +21,10 @@ async function laySach(duongDan: string): Promise<KetQuaInterface> {
     // Lấy ra json sach
     const responseData = response._embedded.saches;
     console.log(responseData);
-    //lay thong tin trang
-    const tongSoTrang = response.page.totalPages;
-    const tongSoSach = response.page.totalElements;
 
+    // lấy thông tin trang
+    const tongSoTrang:number = response.page.totalPages;
+    const tongSoSach: number = response.page.totalElements;
 
     for (const key in responseData) {
         ketQua.push({
@@ -34,10 +39,10 @@ async function laySach(duongDan: string): Promise<KetQuaInterface> {
         });
     }
 
-    return {ketQua:ketQua, tongSoSach: tongSoTrang, tongSoTrang: tongSoTrang};
+    return {ketQua: ketQua, tongSoSach: tongSoTrang, tongSoTrang: tongSoTrang};
 }
 
-export async function layToanBoSach(trang:number): Promise<KetQuaInterface> {
+export async function layToanBoSach(trang: number): Promise<KetQuaInterface> {
 
     // Xác định endpoint
     const duongDan: string = `http://localhost:8080/sach?sort=maSach,desc&size=8&page=${trang}`;
@@ -45,8 +50,6 @@ export async function layToanBoSach(trang:number): Promise<KetQuaInterface> {
     return laySach(duongDan);
 
 }
-
-
 
 export async function lay3SachMoiNhat(): Promise<KetQuaInterface> {
 
@@ -56,21 +59,7 @@ export async function lay3SachMoiNhat(): Promise<KetQuaInterface> {
     return laySach(duongDan);
 
 }
-export async function getTotalNumberOfBooks():Promise<number>{
-const endpoint:string="http://localhost:8080/sach/get-total";
-try {
-    // Gọi phương thức request()
-    const response = await require(endpoint);
-    // Kiểm tra xem dữ liệu endpoint trả về có dữ liệu không
-    if (response) {
-        // Trả về số lượng cuốn sách
-        return response;
-    }
-}catch (error){
-throw new Error("loi khong goi duoc tong so sach\n"+error);
-}
-return 0;
-}
+
 // http://localhost:8080/sach/search/findByTenSachContaining?tenSach=Ti%E1%BB%83u%20thuy%E1%BA%BFt1
 export async function timKiemSach(tuKhoaTimKiem: string,maTheLoai:number): Promise<KetQuaInterface> {
 

@@ -23,3 +23,4 @@ const Search: React.FC<SearchProps> = ({ search, setSearch }) => {
 };
 
 export default Search;
+

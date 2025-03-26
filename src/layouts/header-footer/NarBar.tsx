@@ -39,17 +39,6 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                             </NavLink>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown1">
                                 <li><NavLink className="dropdown-item" to="/1">Thể loại 1</NavLink></li>
-                                <li><a className="dropdown-item" href="/2">Thể loại 2</a></li>
-                                <li><a className="dropdown-item" href="/3">Thể loại 3</a></li>
-                            </ul>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <NavLink className="nav-link dropdown-toggle" to="#" id="navbarDropdown1" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Thể loại sách
-                            </NavLink>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdown1">
-                                <li><NavLink className="dropdown-item" to="/1">Thể loại 1</NavLink></li>
                                 <li><NavLink className="dropdown-item" to="/2">Thể loại 2</NavLink></li>
                                 <li><NavLink className="dropdown-item" to="/3">Thể loại 3</NavLink></li>
                             </ul>
@@ -65,26 +54,7 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                                 <li><a className="dropdown-item" href="#">Quy định 3</a></li>
                             </ul>
                         </li>
-                        <li className="nav-item dropdown">
-                            <NavLink className="navbar-brand" to={"/"}>
-                                SBR Demo
-                            </NavLink>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <NavLink
-                                className="nav-link active"
-                                aria-current="page"
-                                to={"/view-students"}>
-                                View All Student
-                            </NavLink>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <NavLink
-                                className="nav-link"
-                                to={"/add-students"}>
-                                Add new Students
-                            </NavLink>
-                        </li>
+
                         <li className="nav-item">
                             <NavLink className="nav-link" to="#">Liên hệ</NavLink>
                         </li>
@@ -121,17 +91,6 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                         </li>
                     </ul>
 
-                {/* Biểu tượng đăng nhập */}
-                {!isToken() && (
-                    <div>
-                        <Link to={"/dangnhap"}>
-                            Đăng nhập
-                        </Link>
-                        <Link to={"/register"}>
-                            Đăng ký
-                        </Link>
-                    </div>
-                )}
                 </div>
             </div>
         </nav>
