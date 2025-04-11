@@ -9,11 +9,49 @@ function Banner() {
                     <h3 className="display-5 fw-bold">
                         Đọc sách chính là hộ chiếu <br/> cho vô số cuộc phiêu lưu
                     </h3>
-                    <p className="">Mary Pope Osborne</p>
-                    <button className="btn btn-primary btn-lg text-white float-end">Khám phá sách tại TITV.vn</button>
+                    <p className=""></p>
+                    <button className="btn btn-primary btn-lg text-white float-end">Khám phá ngay</button>
                 </div>
             </div>
         </div>
     );
 }
 export default Banner;
+
+
+
+
+
+
+
+
+// import React from "react";
+// import { Link } from "react-router-dom";
+// // Import ảnh từ thư mục src/images (Đảm bảo đường dẫn và đuôi .jpg đúng)
+// import bannerImageUrl from '../../../images/Youngsan.jpg'; // <<<=== Đảm bảo đường dẫn đúng
+//
+// function Banner() {
+//     return (
+//         // Container giữ banner
+//         // mb-3 để tạo khoảng cách dưới
+//         // Bạn có thể thêm class khác nếu muốn có nền hoặc padding
+//         <div className="container-fluid p-0 mb-3">
+//             <Link to="/">
+//                 <img
+//                     src={bannerImageUrl}
+//                     className="img-fluid w-100" // Giữ lại để ảnh co theo chiều rộng
+//                     alt="YoungSan Bookstore Banner"
+//                     // Thêm style để giới hạn chiều cao tối đa
+//                     style={{
+//                         display: 'block', // Giữ lại
+//                         maxHeight: '200px', // <<<=== THAY ĐỔI CON SỐ NÀY ĐỂ CHỈNH CHIỀU CAO
+//                         objectFit: 'cover' // <<<=== THÊM CÁI NÀY QUAN TRỌNG
+//                         // object-position: 'center center' // Tùy chọn: Căn giữa ảnh nếu nó bị cắt
+//                     }}
+//                 />
+//             </Link>
+//         </div>
+//     );
+// }
+//
+// export default Banner;

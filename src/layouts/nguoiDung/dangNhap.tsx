@@ -1,74 +1,128 @@
+// src/layouts/nguoiDung/DangNhap.tsx
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom'; // Thêm Link và useNavigate
+// import { jwtDecode } from "jwt-decode"; // Không cần decode ở đây
 
 const DangNhap = () => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        const loginRequest = {
-            username: username,
-            password: password
-        };
+        if (!username || !password) {
+            setError("Vui lòng nhập tên đăng nhập và mật khẩu.");
+            return;
+        }
+        setIsLoading(true);
+        setError('');
 
-        fetch('http://localhost:8080/tai-khoan/dang-nhap',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(loginRequest)
-            }
-        ).then(
-            (response) => {
+        const loginRequest = { username: username, password: password };
+
+        fetch('http://localhost:8080/tai-khoan/dang-nhap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(loginRequest)
+        })
+            .then((response) => {
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error('Đăng nhập thất bại!')
+                    return response.text().then(text => {
+                        let errorMsg = `Lỗi ${response.status}: `;
+                        try {
+                            const errorJson = JSON.parse(text);
+                            errorMsg += errorJson.message || errorJson.error || text;
+                        } catch (e) {
+                            errorMsg += text || "Sai tên đăng nhập hoặc mật khẩu.";
+                        }
+                        throw new Error(errorMsg);
+                    });
                 }
-            }
-        ).then(
-            (data) => {
-                // Xử lý đăng nhập thành công
+            })
+            .then((data) => {
                 const { jwt } = data;
-                // Lưu token vào localStorage hoặc cookie
-                localStorage.setItem('token', jwt);
-                // Điều hướng đến trang chính hoặc thực hiện các tác vụ sau đăng nhập thành công
-                setError('Đăng nhập thành công!');
-            }
-        ).catch((error) => {
-                // Xử lý lỗi đăng nhập
+                if (jwt) { // Kiểm tra có jwt không
+                    localStorage.setItem('token', jwt); // Lưu token
+                    // Bắn sự kiện báo đăng nhập thành công cho Navbar
+                    window.dispatchEvent(new CustomEvent('loginSuccess'));
+                    console.log("Dispatched loginSuccess event"); // Debug
+                    // Chuyển hướng về trang chủ
+                    navigate('/');
+                } else {
+                    // Trường hợp response ok nhưng không có jwt (bất thường)
+                    throw new Error("Phản hồi đăng nhập không hợp lệ.");
+                }
+            })
+            .catch((error: any) => {
                 console.error('Đăng nhập thất bại: ', error);
-                setError('Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.');
-            }
-        )
+                setError(error.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại.');
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
+
+    // --- JSX Đã Cải Thiện ---
     return (
-        <div className='container'>
-            <div className="form-signin">
-                <h1 className="h3 mb-3 font-weight-normal">Đăng nhập</h1>
-                <label className="sr-only">Tên đăng nhập</label>
-                <input type="username" id="username" className="form-control mb-2" placeholder="Email address"
-                       value={username}
-                       onChange={(e) => setUsername(e.target.value)}
-                />
-                <label className="sr-only">Password</label>
-                <input type="password" id="inputPassword" className="form-control mb-2" placeholder="Password" required
-                       value={password}
-                       onChange={(e) => setPassword(e.target.value)}
-                />
-                <div className="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" value="remember-me" /> Remember me
-                    </label>
+        <div className="container mt-4 mb-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6 col-lg-5">
+                    <div className="card shadow-sm">
+                        <div className="card-body p-4">
+                            <h1 className="h3 mb-4 text-center fw-normal">Đăng nhập</h1>
+                            {error && (
+                                <div className="alert alert-danger" role="alert">
+                                    {error}
+                                </div>
+                            )}
+                            <form onSubmit={(e)=>{ e.preventDefault(); handleLogin(); }}>
+                                <div className="form-floating mb-3">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="username"
+                                        placeholder="Tên đăng nhập hoặc Email"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        disabled={isLoading}
+                                    />
+                                    <label htmlFor="username">Tên đăng nhập hoặc Email</label>
+                                </div>
+                                <div className="form-floating mb-3">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="inputPassword"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        disabled={isLoading}
+                                    />
+                                    <label htmlFor="inputPassword">Mật khẩu</label>
+                                </div>
+                                <div className="checkbox mb-3 text-start">
+                                    {/* <label><input type="checkbox" value="remember-me" disabled={isLoading} /> Ghi nhớ tôi</label> */}
+                                </div>
+                                <button
+                                    className="w-100 btn btn-lg btn-primary"
+                                    type="submit"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? ( /* ... spinner ... */ "Đang đăng nhập..." ) : ( "Đăng nhập" )}
+                                </button>
+                            </form>
+                            <div className="mt-3 text-center">
+                                <p>Chưa có tài khoản? <Link to="/dang-ky">Đăng ký tại đây</Link></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button className="btn btn-lg btn-primary btn-block" type="button"
-                        onClick={handleLogin}
-                >Đăng nhập</button>
-                {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
         </div>
     );
 }
-
 export default DangNhap;
