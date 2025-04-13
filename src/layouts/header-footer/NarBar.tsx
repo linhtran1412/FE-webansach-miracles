@@ -85,22 +85,29 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
         // navigate(`/tim-kiem?tuKhoa=${tuKhoaTamThoi}`);
     }
 
-    // --- HÀM XỬ LÝ ĐĂNG XUẤT ---
-    const handleLogout = () => {
-        localStorage.removeItem('token'); // Xóa token
-        setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
-        setSoLuongTrongGio(0); // Reset số lượng giỏ hàng trên UI
-        // Thông báo cho các component khác (nếu cần) - không bắt buộc nếu dùng reload
-        // window.dispatchEvent(new CustomEvent('logout'));
-        navigate("/"); // Chuyển về trang chủ
-        // window.location.reload(); // Hoặc reload lại trang để reset hoàn toàn (cách đơn giản nhất)
-    };
+    // // --- HÀM XỬ LÝ ĐĂNG XUẤT ---
+    // const handleLogout = () => {
+    //     localStorage.removeItem('token'); // Xóa token
+    //     setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
+    //     setSoLuongTrongGio(0); // Reset số lượng giỏ hàng trên UI
+    //     // Thông báo cho các component khác (nếu cần) - không bắt buộc nếu dùng reload
+    //     // window.dispatchEvent(new CustomEvent('logout'));
+    //     navigate("/"); // Chuyển về trang chủ
+    //     // window.location.reload(); // Hoặc reload lại trang để reset hoàn toàn (cách đơn giản nhất)
+    // };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userRoles'); // <<< XÓA ROLES KHI LOGOUT
+        window.dispatchEvent(new Event('authChange')); // <<< BẮN SỰ KIỆN
+        navigate("/");
+        // window.location.reload(); // Có thể reload để đảm bảo reset hoàn toàn
+    };
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"> {/* Thêm sticky-top */}
             <div className="container-fluid">
                 {/* Brand và Toggler */}
-                <NavLink className="navbar-brand" to="/">Bookstore</NavLink> {/* Dùng NavLink */}
+                <NavLink className="navbar-brand" to="/">YoungSan</NavLink> {/* Dùng NavLink */}
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -118,11 +125,11 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                             </NavLink>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown1">
                                 {/* Nên fetch danh sách thể loại từ API thay vì hardcode */}
-                                <li><NavLink className="dropdown-item" to="/the-loai/1">Thể loại 1</NavLink></li>
-                                <li><NavLink className="dropdown-item" to="/the-loai/2">Thể loại 2</NavLink></li>
-                                <li><NavLink className="dropdown-item" to="/the-loai/3">Thể loại 3</NavLink></li>
-                                <li><hr className="dropdown-divider"/></li>
-                                <li><NavLink className="dropdown-item" to="/tat-ca-sach">Tất cả sách</NavLink></li>
+                                <li><NavLink className="dropdown-item" to="/the-loai/1">Sách khoa học </NavLink></li>
+                                <li><NavLink className="dropdown-item" to="/the-loai/2">Giáo trình </NavLink></li>
+                                <li><NavLink className="dropdown-item" to="/the-loai/3">Từ điển </NavLink></li>
+                                <li><NavLink className="dropdown-item" to="/the-loai/4">Tiểu thuyết</NavLink></li>
+                                <li><NavLink className="dropdown-item" to="/the-loai/5">Truyện tranh </NavLink></li>
                             </ul>
                         </li>
                         {/* Dropdown Quy định (Nếu là link tĩnh thì dùng NavLink) */}
@@ -131,15 +138,16 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
                                 Quy định bán hàng
                             </NavLink>
                             <ul className="dropdown-menu" aria-labelledby="navbarDropdown2">
-                                <li><NavLink className="dropdown-item" to="/quy-dinh/1">Quy định 1</NavLink></li>
-                                <li><NavLink className="dropdown-item" to="/quy-dinh/2">Quy định 2</NavLink></li>
-                                <li><NavLink className="dropdown-item" to="/quy-dinh/3">Quy định 3</NavLink></li>
+                                <li><a className="dropdown-item" href="/quydinh1.html" target="_blank" rel="noopener noreferrer">Mua hàng và thanh toán </a></li>
+                                <li><a className="dropdown-item" href="/quydinh2.html" target="_blank" rel="noopener noreferrer">Vận chuyển và giao hàng </a></li>
                             </ul>
                         </li>
                         {/* Link Liên hệ */}
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/lien-he">Liên hệ</NavLink> {/* Trỏ đến trang /lien-he */}
-                        </li>
+
+                        {/*<li className="nav-item">*/}
+                        {/*    <NavLink className="nav-link" to="/lien-he">Liên hệ</NavLink> /!* Trỏ đến trang /lien-he *!/*/}
+                        {/*</li>*/}
+
                         {/* Link Admin (chỉ hiện khi là admin?) - Cần logic kiểm tra role phức tạp hơn */}
                         {/* {isAdmin && <li className="nav-item"><NavLink className="nav-link" to="/admin">Quản trị</NavLink></li>} */}
                     </ul>
