@@ -6,7 +6,7 @@ const NavBarAD: React.FC = () => {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
             <div className="container-fluid">
                 <NavLink className="navbar-brand" to="/admin">
-                    SBR Demo
+                    Admin
                 </NavLink>
 
                 <button
