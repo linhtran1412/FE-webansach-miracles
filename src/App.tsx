@@ -410,25 +410,18 @@
 
 
 
-
-
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter, Route, Routes, useLocation, Navigate,Link } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, Navigate, Link } from "react-router-dom";
 
 // --- Import Components Layout Chính ---
 import Navbar from "./layouts/header-footer/NarBar";
 import Footer from "./layouts/header-footer/Footer";
-import NavBarAD from "./LayoutAD/header-footer_AD/Narbar_AD"; // Navbar Admin
+import NavBarAD from "./LayoutAD/header-footer_AD/Navbar_AD"; // Navbar Admin
 
 // --- Import Pages/Components Người dùng ---
 import HomePage from "./layouts/homePage/hompage";
-import About from "./layouts/about/About"; // Trang giới thiệu (nếu dùng component)
+// import About from "./layouts/about/About"; // Trang giới thiệu (nếu dùng component)
 import ChiTietSanPham from "./layouts/products/chiTietSanPham";
 import DangKyNguoiDung from "./layouts/nguoiDung/dangKyNguoiDung";
 import KichHoatTaiKhoan from "./layouts/nguoiDung/kichHoatTaiKhoan";
@@ -446,23 +439,25 @@ import DanhSachSanPhamAD from "./LayoutAD/products/danhSachSanPham"; // Trang ch
 import SachForm from "./layouts/admin/sachForm";                     // Trang thêm sách
 import ChiTietSanPhamAD from './layouts/admin/chiTietSanPhamAD';     // Trang chi tiết sách admin
 import SachUpdate from './layouts/admin/SachUpdate';                 // Trang cập nhật sách admin
+import ReportsPage from "./layouts/admin/ReportsPage";
+import QuanLyDonHangList from './layouts/admin/DonHangList'; // <<< Import Quản lý Đơn hàng Admin
 // Import trang quản lý thể loại nếu đã tạo
 // import QuanLyTheLoai from './pages/admin/QuanLyTheLoai';
 
 // === Import các hàm kiểm tra Auth ===
-import { isLoggedIn, checkAdminRole } from './layouts/Utils/authCheck'; // <<< KIỂM TRA LẠI ĐƯỜNG DẪN NÀY
+// <<< THÊM checkAdminOrStaffRole >>>
+import { isLoggedIn, checkAdminRole, checkAdminOrStaffRole } from './layouts/Utils/authCheck';
 
 // Component Wrapper để quản lý layout và routing
 const AppContent = () => {
     const location = useLocation();
     const [tuKhoaTimKiem, setTuKhoaTimKiem] = useState('');
-
     // State để trigger re-render khi trạng thái đăng nhập/quyền thay đổi
-    // Lấy giá trị ban đầu từ token để đảm bảo render đúng lần đầu
     const [authVersion, setAuthVersion] = useState(() => localStorage.getItem('token'));
-    // Kiểm tra trạng thái đăng nhập và quyền admin từ localStorage
+    // <<< SỬA: Dùng hàm kiểm tra mới >>>
     const isUserLoggedIn = isLoggedIn();
-    const isAdmin = checkAdminRole();
+    const hasAdminAccess = checkAdminOrStaffRole(); // Kiểm tra Admin HOẶC Staff
+    const isStrictlyAdmin = checkAdminRole();      // Chỉ kiểm tra Admin
 
     // Lắng nghe sự kiện 'authChange' để cập nhật component khi login/logout
     useEffect(() => {
@@ -476,28 +471,25 @@ const AppContent = () => {
         };
     }, []); // Chỉ chạy 1 lần
 
-    // Debug log (có thể xóa sau khi hoạt động ổn định)
-    // console.log(`Rendering AppContent: isLoggedIn=${isUserLoggedIn}, isAdmin=${isAdmin}, Path=${location.pathname}`);
-
     return (
         <>
-            {/* Chọn Navbar phù hợp dựa trên quyền Admin */}
-            {isAdmin && location.pathname.startsWith('/admin') ? <NavBarAD /> : <Navbar tuKhoaTimKiem={tuKhoaTimKiem} setTuKhoaTimKiem={setTuKhoaTimKiem} />}
+            {/* Chọn Navbar phù hợp */}
+            {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+            {hasAdminAccess && location.pathname.startsWith('/admin') ? <NavBarAD /> : <Navbar tuKhoaTimKiem={tuKhoaTimKiem} setTuKhoaTimKiem={setTuKhoaTimKiem} />}
 
             {/* Phần Nội dung chính */}
             <div className="main-content" style={{ minHeight: 'calc(100vh - 150px)' }}>
                 <Routes>
-                    {/* --- Routes Public (Ai cũng vào được) --- */}
+                    {/* --- Routes Public (Ai cũng vào được) --- Giữ nguyên */}
                     <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
                     <Route path='/the-loai/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-                    {/* <Route path='/about' element={<About />} /> */} {/* Nếu dùng component About */}
+                    {/* <Route path='/about' element={<About />} /> */}
                     <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
                     <Route path='/dang-ky' element={<DangKyNguoiDung />} />
                     <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan />} />
                     <Route path='/dang-nhap' element={<DangNhap />} />
 
-                    {/* --- Routes yêu cầu ĐĂNG NHẬP (User hoặc Admin) --- */}
-                    {/* Sử dụng Navigate để chuyển hướng nếu chưa đăng nhập */}
+                    {/* --- Routes yêu cầu ĐĂNG NHẬP (User hoặc Admin/Staff) --- Giữ nguyên */}
                     <Route path='/gio-hang' element={isUserLoggedIn ? <GioHang /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/thanh-toan/dia-chi' element={isUserLoggedIn ? <CheckoutAddress /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/thanh-toan/van-chuyen' element={isUserLoggedIn ? <CheckoutShipping /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
@@ -509,25 +501,26 @@ const AppContent = () => {
                     {/* === KẾT THÚC ROUTE HỒ SƠ === */}
 
 
-                    {/* --- Routes chỉ dành cho ADMIN --- */}
-                    {/* Chỉ render các Route này nếu biến isAdmin là true */}
-                    {isAdmin && (
-                        <>
-                            {/* Dùng path lồng nhau cho admin sẽ tốt hơn */}
-                            <Route path='/admin'>
-                                <Route index element={<DanhSachSanPhamAD tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={0} setTuKhoaTimKiem={setTuKhoaTimKiem} />} /> {/* Trang /admin */}
-                                <Route path='them-sach' element={<SachForm />} /> {/* Trang /admin/them-sach */}
-                                <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* Trang /admin/sach/:maSach */}
-                                <Route path='cap-nhat/:maSach' element={<SachUpdate />} /> {/* Trang /admin/cap-nhat/:maSach */}
-                                {/* <Route path='the-loai' element={<QuanLyTheLoai />} /> */} {/* Ví dụ trang quản lý thể loại */}
-                                {/* Thêm các route admin khác vào đây */}
-                            </Route>
-                        </>
+                    {/* --- Routes chỉ dành cho ADMIN hoặc STAFF --- */}
+                    {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+                    {hasAdminAccess && (
+                        <Route path='/admin'>
+                            <Route index element={<DanhSachSanPhamAD tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={0} setTuKhoaTimKiem={setTuKhoaTimKiem} />} /> {/* Trang /admin */}
+                            <Route path='them-sach' element={<SachForm />} /> {/* Trang /admin/them-sach */}
+                            <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* Trang /admin/sach/:maSach */}
+                            <Route path='cap-nhat/:maSach' element={<SachUpdate />} /> {/* Trang /admin/cap-nhat/:maSach */}
+                            {/* Route Quản lý Đơn hàng cho Admin/Staff */}
+                            <Route path='don-hang' element={<QuanLyDonHangList />} />
+                            {/* Route Báo cáo - Chỉ Admin (dùng isStrictlyAdmin) */}
+                            {/* <<< SỬA: Bảo vệ bằng isStrictlyAdmin >>> */}
+                            <Route path='bao-cao' element={isStrictlyAdmin ? <ReportsPage /> : <Navigate to="/admin" replace />} />
+                            {/* Thêm các route admin khác vào đây */}
+                        </Route>
                     )}
 
-                    {/* --- Route xử lý khi User cố vào /admin --- */}
-                    {/* Nếu không phải admin VÀ đường dẫn bắt đầu bằng /admin thì chuyển về trang chủ */}
-                    { !isAdmin && location.pathname.startsWith("/admin") && (
+                    {/* --- Route xử lý khi User (không phải Admin/Staff) cố vào /admin --- */}
+                    {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+                    { !hasAdminAccess && location.pathname.startsWith("/admin") && (
                         <Route path="/admin/*" element={<Navigate to="/" replace />} />
                     )}
 
@@ -538,7 +531,8 @@ const AppContent = () => {
             </div>
 
             {/* Hiển thị Footer nếu không phải trang admin */}
-            {!location.pathname.startsWith("/admin") && <Footer />}
+            {/* <<< SỬA: Dùng hasAdminAccess và kiểm tra path >>> */}
+            {!hasAdminAccess && !location.pathname.startsWith("/admin") && <Footer />}
         </>
     );
 }

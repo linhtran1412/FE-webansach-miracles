@@ -107,7 +107,7 @@ function Navbar({ tuKhoaTimKiem, setTuKhoaTimKiem }: NavbarProps) {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"> {/* Thêm sticky-top */}
             <div className="container-fluid">
                 {/* Brand và Toggler */}
-                <NavLink className="navbar-brand" to="/">YoungSan</NavLink> {/* Dùng NavLink */}
+                <NavLink className="navbar-brand" to="/">Miracles</NavLink> {/* Dùng NavLink */}
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>

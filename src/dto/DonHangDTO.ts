@@ -1,4 +1,3 @@
-// src/dto/DonHangDTO.ts
 import { ChiTietDonHangDTO } from "./ChiTietDonHangDTO"; // Import đúng file vừa tạo
 
 export interface DonHangDTO {

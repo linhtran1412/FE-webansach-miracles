@@ -1,4 +1,3 @@
-// src/dto/UserInfoDTO.ts
 export interface UserInfoDTO {
     maNguoiDung: number;
     tenDangNhap: string;

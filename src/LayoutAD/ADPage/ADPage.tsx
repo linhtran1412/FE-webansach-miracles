@@ -1,5 +1,5 @@
 import React from "react";
-import NavBarAD from "../header-footer_AD/Narbar_AD";
+import NavBarAD from "../header-footer_AD/Navbar_AD";
 import DanhSachSanPhamAD from "../products/danhSachSanPham";
 import DanhSachSanPham from "../../layouts/products/danhSachSanPham";
 import {useParams} from "react-router-dom";

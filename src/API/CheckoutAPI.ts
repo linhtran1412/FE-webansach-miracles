@@ -1,4 +1,3 @@
-// src/API/CheckoutAPI.ts
 import { HinhThucGiaoHangModel, HinhThucThanhToanModel } from "../models/LookupModels"; // Sẽ tạo model này sau
 import DonHangModel from "../models/DonHangModel";
 

@@ -1,4 +1,3 @@
-// src/API/GioHangAPI.ts
 import GioHangModel from "../models/GioHangModel"; // Đảm bảo import đúng model
 
 // Hàm tiện ích để lấy token

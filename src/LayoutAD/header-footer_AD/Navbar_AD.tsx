@@ -83,6 +83,11 @@ const NavBarAD: React.FC = () => {
                             </NavLink>
                         </li>
                         {/* Có thể thêm các link quản lý khác ở đây nếu cần */}
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/admin/bao-cao">
+                                Báo cáo
+                            </NavLink>
+                        </li>
                     </ul>
 
                     {/* === THÊM NÚT ĐĂNG XUẤT === */}

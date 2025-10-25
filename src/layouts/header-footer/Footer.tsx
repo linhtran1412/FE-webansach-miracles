@@ -76,9 +76,8 @@
 import React from "react";
 
 function Footer() {
-    // Thông tin liên hệ (giữ nguyên)
-    const emailLienHe = "youngsan@gmail.com";
-    const hotlineLienHe = "1900 6685"; // Thay số của bạn
+    const emailLienHe = "Miracles_bookstore_cskh@gmail.com";
+    const hotlineLienHe = "1900 6685";
     const gioMoCua = "8:00 - 22:00 (Thứ 2 - Chủ Nhật)";
 
     return (
@@ -138,11 +137,11 @@ function Footer() {
 
                 {/* Thông tin địa chỉ và bản quyền (Giữ nguyên) */}
                 <div className="text-start mt-4">
-                    <p className="mb-1"> <b> Cửa hàng sách YoungSan </b> </p>
+                    <p className="mb-1"> <b> Cửa hàng sách Miracles </b> </p>
                     <p className="small text-muted mb-0">314B Lê Văn Sỹ, Phường 10, Quận Tân Bình, TP.HCM</p>
                 </div>
                 <div className="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-                    <p>&copy; 2025 YoungSan Bookstore</p>
+                    <p>&copy; 2025 Miracles Bookstore</p>
                     <ul className="list-unstyled d-flex">
                         <li className="ms-3"><a className="link-body-emphasis" href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a></li>
                         <li className="ms-3"><a className="link-body-emphasis" href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a></li>
