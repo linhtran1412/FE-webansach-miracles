@@ -410,25 +410,167 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import './App.css';
+// import { BrowserRouter, Route, Routes, useLocation, Navigate, Link } from "react-router-dom";
+//
+// // --- Import Components Layout Chính ---
+// import Navbar from "./layouts/header-footer/NarBar";
+// import Footer from "./layouts/header-footer/Footer";
+// import NavBarAD from "./LayoutAD/header-footer_AD/Navbar_AD"; // Navbar Admin
+//
+// // --- Import Pages/Components Người dùng ---
+// import HomePage from "./layouts/homePage/hompage";
+// // import About from "./layouts/about/About"; // Trang giới thiệu (nếu dùng component)
+// import ChiTietSanPham from "./layouts/products/chiTietSanPham";
+// import DangKyNguoiDung from "./layouts/nguoiDung/dangKyNguoiDung";
+// import KichHoatTaiKhoan from "./layouts/nguoiDung/kichHoatTaiKhoan";
+// import DangNhap from "./layouts/nguoiDung/dangNhap";
+// import GioHang from './pages/GioHang';
+// import DonHangList from './layouts/nguoiDung/DonHangList'; // Trang đơn hàng của user
+// import TaiKhoanHoSo from './pages/TaiKhoanHoSo';       // <<< Import Trang Hồ sơ
+// import CheckoutAddress from './pages/checkout/CheckoutAddress';
+// import CheckoutShipping from './pages/checkout/CheckoutShipping';
+// import CheckoutPayment from './pages/checkout/CheckoutPayment';
+// import CheckoutSuccess from './pages/checkout/CheckoutSuccess';
+//
+// // --- Import Pages/Components Admin ---
+// import DanhSachSanPhamAD from "./LayoutAD/products/danhSachSanPham"; // Trang chính admin
+// import SachForm from "./layouts/admin/sachForm";                     // Trang thêm sách
+// import ChiTietSanPhamAD from './layouts/admin/chiTietSanPhamAD';     // Trang chi tiết sách admin
+// import SachUpdate from './layouts/admin/SachUpdate';                 // Trang cập nhật sách admin
+// import ReportsPage from "./layouts/admin/ReportsPage";
+// import QuanLyDonHangList from './layouts/admin/DonHangList'; // <<< Import Quản lý Đơn hàng Admin
+// // Import trang quản lý thể loại nếu đã tạo
+// // import QuanLyTheLoai from './pages/admin/QuanLyTheLoai';
+//
+// // === Import các hàm kiểm tra Auth ===
+// // <<< THÊM checkAdminOrStaffRole >>>
+// import { isLoggedIn, checkAdminRole, checkAdminOrStaffRole } from './layouts/Utils/authCheck';
+//
+// // Component Wrapper để quản lý layout và routing
+// const AppContent = () => {
+//     const location = useLocation();
+//     const [tuKhoaTimKiem, setTuKhoaTimKiem] = useState('');
+//     // State để trigger re-render khi trạng thái đăng nhập/quyền thay đổi
+//     const [authVersion, setAuthVersion] = useState(() => localStorage.getItem('token'));
+//     // <<< SỬA: Dùng hàm kiểm tra mới >>>
+//     const isUserLoggedIn = isLoggedIn();
+//     const hasAdminAccess = checkAdminOrStaffRole(); // Kiểm tra Admin HOẶC Staff
+//     const isStrictlyAdmin = checkAdminRole();      // Chỉ kiểm tra Admin
+//
+//     // Lắng nghe sự kiện 'authChange' để cập nhật component khi login/logout
+//     useEffect(() => {
+//         const handleAuthChange = () => {
+//             console.log("Auth state changed event detected, re-rendering AppContent...");
+//             setAuthVersion(localStorage.getItem('token')); // Cập nhật state để trigger render lại
+//         };
+//         window.addEventListener('authChange', handleAuthChange);
+//         return () => {
+//             window.removeEventListener('authChange', handleAuthChange);
+//         };
+//     }, []); // Chỉ chạy 1 lần
+//
+//     return (
+//         <>
+//             {/* Chọn Navbar phù hợp */}
+//             {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+//             {hasAdminAccess && location.pathname.startsWith('/admin') ? <NavBarAD /> : <Navbar tuKhoaTimKiem={tuKhoaTimKiem} setTuKhoaTimKiem={setTuKhoaTimKiem} />}
+//
+//             {/* Phần Nội dung chính */}
+//             <div className="main-content" style={{ minHeight: 'calc(100vh - 150px)' }}>
+//                 <Routes>
+//                     {/* --- Routes Public (Ai cũng vào được) --- Giữ nguyên */}
+//                     <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+//                     <Route path='/the-loai/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
+//                     {/* <Route path='/about' element={<About />} /> */}
+//                     <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
+//                     <Route path='/dang-ky' element={<DangKyNguoiDung />} />
+//                     <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan />} />
+//                     <Route path='/dang-nhap' element={<DangNhap />} />
+//
+//                     {/* --- Routes yêu cầu ĐĂNG NHẬP (User hoặc Admin/Staff) --- Giữ nguyên */}
+//                     <Route path='/gio-hang' element={isUserLoggedIn ? <GioHang /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     <Route path='/thanh-toan/dia-chi' element={isUserLoggedIn ? <CheckoutAddress /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     <Route path='/thanh-toan/van-chuyen' element={isUserLoggedIn ? <CheckoutShipping /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     <Route path='/thanh-toan/thanh-toan' element={isUserLoggedIn ? <CheckoutPayment /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     <Route path='/dat-hang-thanh-cong/:maDonHang' element={isUserLoggedIn ? <CheckoutSuccess /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     <Route path='/tai-khoan/don-hang' element={isUserLoggedIn ? <DonHangList isAdmin={false} /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     {/* === ROUTE HỒ SƠ === */}
+//                     <Route path='/tai-khoan/ho-so' element={isUserLoggedIn ? <TaiKhoanHoSo /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+//                     {/* === KẾT THÚC ROUTE HỒ SƠ === */}
+//
+//
+//                     {/* --- Routes chỉ dành cho ADMIN hoặc STAFF --- */}
+//                     {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+//                     {hasAdminAccess && (
+//                         <Route path='/admin'>
+//                             <Route index element={<DanhSachSanPhamAD tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={0} setTuKhoaTimKiem={setTuKhoaTimKiem} />} /> {/* Trang /admin */}
+//                             <Route path='them-sach' element={<SachForm />} /> {/* Trang /admin/them-sach */}
+//                             <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* Trang /admin/sach/:maSach */}
+//                             <Route path='cap-nhat/:maSach' element={<SachUpdate />} /> {/* Trang /admin/cap-nhat/:maSach */}
+//                             {/* Route Quản lý Đơn hàng cho Admin/Staff */}
+//                             <Route path='don-hang' element={<QuanLyDonHangList />} />
+//                             {/* Route Báo cáo - Chỉ Admin (dùng isStrictlyAdmin) */}
+//                             {/* <<< SỬA: Bảo vệ bằng isStrictlyAdmin >>> */}
+//                             <Route path='bao-cao' element={isStrictlyAdmin ? <ReportsPage /> : <Navigate to="/admin" replace />} />
+//                             {/* Thêm các route admin khác vào đây */}
+//                         </Route>
+//                     )}
+//
+//                     {/* --- Route xử lý khi User (không phải Admin/Staff) cố vào /admin --- */}
+//                     {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+//                     { !hasAdminAccess && location.pathname.startsWith("/admin") && (
+//                         <Route path="/admin/*" element={<Navigate to="/" replace />} />
+//                     )}
+//
+//                     {/* Route 404 Not Found (Đặt cuối cùng) */}
+//                     <Route path="*" element={<div className='container mt-5 text-center'><h1>404 - Trang không tồn tại</h1><Link to="/">Quay về trang chủ</Link></div>} />
+//
+//                 </Routes>
+//             </div>
+//
+//             {/* Hiển thị Footer nếu không phải trang admin */}
+//             {/* <<< SỬA: Dùng hasAdminAccess và kiểm tra path >>> */}
+//             {!hasAdminAccess && !location.pathname.startsWith("/admin") && <Footer />}
+//         </>
+//     );
+// }
+//
+// // Component App chính
+// function App() {
+//     return (
+//         <div className='App'>
+//             <BrowserRouter>
+//                 <AppContent />
+//             </BrowserRouter>
+//         </div>
+//     );
+// }
+//
+// export default App;
+
+
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes, useLocation, Navigate, Link } from "react-router-dom";
 
 // --- Import Components Layout Chính ---
-import Navbar from "./layouts/header-footer/NarBar";
+import Navbar from "./layouts/header-footer/NavBar";
 import Footer from "./layouts/header-footer/Footer";
 import NavBarAD from "./LayoutAD/header-footer_AD/Navbar_AD"; // Navbar Admin
 
 // --- Import Pages/Components Người dùng ---
 import HomePage from "./layouts/homePage/hompage";
 // import About from "./layouts/about/About"; // Trang giới thiệu (nếu dùng component)
-import ChiTietSanPham from "./layouts/products/chiTietSanPham";
+import ChiTietSanPham from "./layouts/products/chiTietSanPham"; // <<< Trang chi tiết SP Người dùng
 import DangKyNguoiDung from "./layouts/nguoiDung/dangKyNguoiDung";
 import KichHoatTaiKhoan from "./layouts/nguoiDung/kichHoatTaiKhoan";
 import DangNhap from "./layouts/nguoiDung/dangNhap";
 import GioHang from './pages/GioHang';
 import DonHangList from './layouts/nguoiDung/DonHangList'; // Trang đơn hàng của user
-import TaiKhoanHoSo from './pages/TaiKhoanHoSo';       // <<< Import Trang Hồ sơ
+import TaiKhoanHoSo from './pages/TaiKhoanHoSo';       // Trang Hồ sơ
+import YeuThichPage from './pages/YeuThichPage';     // <<< THÊM IMPORT TRANG YÊU THÍCH (Bạn đã đặt đúng trong /pages)
 import CheckoutAddress from './pages/checkout/CheckoutAddress';
 import CheckoutShipping from './pages/checkout/CheckoutShipping';
 import CheckoutPayment from './pages/checkout/CheckoutPayment';
@@ -437,7 +579,7 @@ import CheckoutSuccess from './pages/checkout/CheckoutSuccess';
 // --- Import Pages/Components Admin ---
 import DanhSachSanPhamAD from "./LayoutAD/products/danhSachSanPham"; // Trang chính admin
 import SachForm from "./layouts/admin/sachForm";                     // Trang thêm sách
-import ChiTietSanPhamAD from './layouts/admin/chiTietSanPhamAD';     // Trang chi tiết sách admin
+import ChiTietSanPhamAD from './layouts/admin/chiTietSanPhamAD';     // Trang chi tiết sách admin <<< Khác với cái ở trên
 import SachUpdate from './layouts/admin/SachUpdate';                 // Trang cập nhật sách admin
 import ReportsPage from "./layouts/admin/ReportsPage";
 import QuanLyDonHangList from './layouts/admin/DonHangList'; // <<< Import Quản lý Đơn hàng Admin
@@ -445,97 +587,84 @@ import QuanLyDonHangList from './layouts/admin/DonHangList'; // <<< Import Quả
 // import QuanLyTheLoai from './pages/admin/QuanLyTheLoai';
 
 // === Import các hàm kiểm tra Auth ===
-// <<< THÊM checkAdminOrStaffRole >>>
-import { isLoggedIn, checkAdminRole, checkAdminOrStaffRole } from './layouts/Utils/authCheck';
+import { isLoggedIn, checkAdminRole, checkAdminOrStaffRole } from './layouts/Utils/authCheck'; // <<< Đã có checkAdminOrStaffRole
 
 // Component Wrapper để quản lý layout và routing
 const AppContent = () => {
     const location = useLocation();
     const [tuKhoaTimKiem, setTuKhoaTimKiem] = useState('');
-    // State để trigger re-render khi trạng thái đăng nhập/quyền thay đổi
     const [authVersion, setAuthVersion] = useState(() => localStorage.getItem('token'));
-    // <<< SỬA: Dùng hàm kiểm tra mới >>>
     const isUserLoggedIn = isLoggedIn();
-    const hasAdminAccess = checkAdminOrStaffRole(); // Kiểm tra Admin HOẶC Staff
-    const isStrictlyAdmin = checkAdminRole();      // Chỉ kiểm tra Admin
+    const hasAdminAccess = checkAdminOrStaffRole(); // Dùng hàm kiểm tra mới
+    const isStrictlyAdmin = checkAdminRole();      // Dùng hàm kiểm tra mới
 
-    // Lắng nghe sự kiện 'authChange' để cập nhật component khi login/logout
     useEffect(() => {
         const handleAuthChange = () => {
             console.log("Auth state changed event detected, re-rendering AppContent...");
-            setAuthVersion(localStorage.getItem('token')); // Cập nhật state để trigger render lại
+            setAuthVersion(localStorage.getItem('token'));
         };
         window.addEventListener('authChange', handleAuthChange);
         return () => {
             window.removeEventListener('authChange', handleAuthChange);
         };
-    }, []); // Chỉ chạy 1 lần
+    }, []);
 
     return (
         <>
             {/* Chọn Navbar phù hợp */}
-            {/* <<< SỬA: Dùng hasAdminAccess >>> */}
             {hasAdminAccess && location.pathname.startsWith('/admin') ? <NavBarAD /> : <Navbar tuKhoaTimKiem={tuKhoaTimKiem} setTuKhoaTimKiem={setTuKhoaTimKiem} />}
 
             {/* Phần Nội dung chính */}
             <div className="main-content" style={{ minHeight: 'calc(100vh - 150px)' }}>
                 <Routes>
-                    {/* --- Routes Public (Ai cũng vào được) --- Giữ nguyên */}
+                    {/* --- Routes Public --- */}
                     <Route path='/' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
                     <Route path='/the-loai/:maTheLoai' element={<HomePage tuKhoaTimKiem={tuKhoaTimKiem} />} />
-                    {/* <Route path='/about' element={<About />} /> */}
-                    <Route path='/sach/:maSach' element={<ChiTietSanPham />} />
+                    <Route path='/sach/:maSach' element={<ChiTietSanPham />} /> {/* <<< Dùng component ChiTietSanPham Người dùng */}
                     <Route path='/dang-ky' element={<DangKyNguoiDung />} />
                     <Route path='/kich-hoat/:email/:maKichHoat' element={<KichHoatTaiKhoan />} />
                     <Route path='/dang-nhap' element={<DangNhap />} />
 
-                    {/* --- Routes yêu cầu ĐĂNG NHẬP (User hoặc Admin/Staff) --- Giữ nguyên */}
+                    {/* --- Routes yêu cầu ĐĂNG NHẬP --- */}
                     <Route path='/gio-hang' element={isUserLoggedIn ? <GioHang /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/thanh-toan/dia-chi' element={isUserLoggedIn ? <CheckoutAddress /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/thanh-toan/van-chuyen' element={isUserLoggedIn ? <CheckoutShipping /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/thanh-toan/thanh-toan' element={isUserLoggedIn ? <CheckoutPayment /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/dat-hang-thanh-cong/:maDonHang' element={isUserLoggedIn ? <CheckoutSuccess /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/tai-khoan/don-hang' element={isUserLoggedIn ? <DonHangList isAdmin={false} /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
-                    {/* === ROUTE HỒ SƠ === */}
                     <Route path='/tai-khoan/ho-so' element={isUserLoggedIn ? <TaiKhoanHoSo /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
-                    {/* === KẾT THÚC ROUTE HỒ SƠ === */}
 
+                    {/* === THÊM ROUTE YÊU THÍCH === */}
+                    <Route path='/tai-khoan/yeu-thich' element={isUserLoggedIn ? <YeuThichPage /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
+                    {/* === KẾT THÚC THÊM ROUTE YÊU THÍCH === */}
 
-                    {/* --- Routes chỉ dành cho ADMIN hoặc STAFF --- */}
-                    {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+                    {/* --- Routes ADMIN / STAFF --- */}
                     {hasAdminAccess && (
                         <Route path='/admin'>
-                            <Route index element={<DanhSachSanPhamAD tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={0} setTuKhoaTimKiem={setTuKhoaTimKiem} />} /> {/* Trang /admin */}
-                            <Route path='them-sach' element={<SachForm />} /> {/* Trang /admin/them-sach */}
-                            <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* Trang /admin/sach/:maSach */}
-                            <Route path='cap-nhat/:maSach' element={<SachUpdate />} /> {/* Trang /admin/cap-nhat/:maSach */}
-                            {/* Route Quản lý Đơn hàng cho Admin/Staff */}
+                            <Route index element={<DanhSachSanPhamAD tuKhoaTimKiem={tuKhoaTimKiem} maTheLoai={0} setTuKhoaTimKiem={setTuKhoaTimKiem} />} />
+                            <Route path='them-sach' element={<SachForm />} />
+                            <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* <<< Dùng component ChiTietSanPhamAD Admin */}
+                            <Route path='cap-nhat/:maSach' element={<SachUpdate />} />
                             <Route path='don-hang' element={<QuanLyDonHangList />} />
-                            {/* Route Báo cáo - Chỉ Admin (dùng isStrictlyAdmin) */}
-                            {/* <<< SỬA: Bảo vệ bằng isStrictlyAdmin >>> */}
                             <Route path='bao-cao' element={isStrictlyAdmin ? <ReportsPage /> : <Navigate to="/admin" replace />} />
-                            {/* Thêm các route admin khác vào đây */}
                         </Route>
                     )}
 
-                    {/* --- Route xử lý khi User (không phải Admin/Staff) cố vào /admin --- */}
-                    {/* <<< SỬA: Dùng hasAdminAccess >>> */}
+                    {/* --- Redirect nếu User vào /admin --- */}
                     { !hasAdminAccess && location.pathname.startsWith("/admin") && (
                         <Route path="/admin/*" element={<Navigate to="/" replace />} />
                     )}
 
-                    {/* Route 404 Not Found (Đặt cuối cùng) */}
+                    {/* --- Route 404 --- */}
                     <Route path="*" element={<div className='container mt-5 text-center'><h1>404 - Trang không tồn tại</h1><Link to="/">Quay về trang chủ</Link></div>} />
-
                 </Routes>
             </div>
 
-            {/* Hiển thị Footer nếu không phải trang admin */}
-            {/* <<< SỬA: Dùng hasAdminAccess và kiểm tra path >>> */}
+            {/* Hiển thị Footer */}
             {!hasAdminAccess && !location.pathname.startsWith("/admin") && <Footer />}
         </>
     );
-}
+};
 
 // Component App chính
 function App() {
@@ -549,3 +678,4 @@ function App() {
 }
 
 export default App;
+

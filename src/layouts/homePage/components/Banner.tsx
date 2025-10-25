@@ -7,7 +7,7 @@ function Banner() {
                 justify-content-center align-items-center" >
                 <div>
                     <h3 className="display-5 fw-bold">
-                        Đọc sách chính là hộ chiếu <br/> cho vô số cuộc phiêu lưu
+                        Sách là một kho tàng tri thức <br/> quy báu cho nhân loại
                     </h3>
                     <p className=""></p>
                     <button className="btn btn-primary btn-lg text-white float-end">Khám phá ngay</button>
@@ -28,7 +28,7 @@ export default Banner;
 // import React from "react";
 // import { Link } from "react-router-dom";
 // // Import ảnh từ thư mục src/images (Đảm bảo đường dẫn và đuôi .jpg đúng)
-// import bannerImageUrl from '../../../images/Youngsan.jpg'; // <<<=== Đảm bảo đường dẫn đúng
+// import bannerImageUrl from '../../../images/abc.jpg'; // <<<=== Đảm bảo đường dẫn đúng
 //
 // function Banner() {
 //     return (
@@ -40,7 +40,7 @@ export default Banner;
 //                 <img
 //                     src={bannerImageUrl}
 //                     className="img-fluid w-100" // Giữ lại để ảnh co theo chiều rộng
-//                     alt="YoungSan Bookstore Banner"
+//                     alt="Miracles Bookstore Banner"
 //                     // Thêm style để giới hạn chiều cao tối đa
 //                     style={{
 //                         display: 'block', // Giữ lại

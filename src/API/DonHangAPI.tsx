@@ -324,87 +324,161 @@
 //
 
 
+// import DonHangModel from "../models/DonHangModel";
+//
+// const getToken = () => localStorage.getItem('token');
+//
+// // Hàm cho USER xem đơn hàng của mình
+// export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
+//     const token = getToken();
+//     if (!token) throw new Error("Bạn cần đăng nhập để xem đơn hàng.");
+//     const url = 'http://localhost:8080/don-hang/my-orders';
+//     try {
+//         const response = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` }});
+//         if (!response.ok) {
+//             const errorText = await response.text().catch(() => `Lỗi ${response.status}`);
+//             throw new Error(errorText || `Lỗi ${response.status} khi lấy lịch sử đơn hàng`);
+//         }
+//         const data: DonHangModel[] = await response.json();
+//         return data;
+//     } catch(error) {
+//         console.error("[API] layDonHangCuaToi fetch/parse error:", error);
+//         throw error;
+//     }
+// }
+//
+// // === CÁC HÀM CHO ADMIN ===
+//
+// // Lấy tất cả đơn hàng (Admin)
+// export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> { // <<< DÙNG TÊN NÀY
+//     const token = getToken();
+//     if (!token) throw new Error("Yêu cầu quyền Admin.");
+//     const url = "http://localhost:8080/don-hang";
+//     try {
+//         const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+//         if (!response.ok) throw new Error(`Lỗi ${response.status} khi lấy tất cả đơn hàng.`);
+//         const data = await response.json();
+//         return data._embedded?.donHangs || (Array.isArray(data) ? data : []);
+//     } catch(error) {
+//         console.error("[API] layToanBoDonHangAdmin fetch/parse error:", error);
+//         throw error;
+//     }
+// }
+//
+// // Cập nhật trạng thái đơn hàng (Admin/Staff) - Ví dụ
+// export async function capNhatTrangThaiDonHangAdmin(maDonHang: number, trangThaiMoi: string): Promise<DonHangModel> { // <<< DÙNG TÊN NÀY (Hoặc tên hàm cập nhật khác bạn tạo)
+//     const token = getToken();
+//     if (!token) throw new Error("Yêu cầu quyền Admin/Staff.");
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     try {
+//         const response = await fetch(url, {
+//             method: "PUT",
+//             headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` },
+//             body: JSON.stringify({ trangThai: trangThaiMoi }),
+//         });
+//         if (!response.ok) {
+//             const errorData = await response.json().catch(()=>({message: `Lỗi ${response.status}`}));
+//             throw new Error(errorData.noiDung || errorData.message || `Lỗi ${response.status} khi cập nhật đơn hàng.`);
+//         }
+//         return await response.json();
+//     } catch (error) {
+//         console.error("[API] capNhatTrangThaiDonHangAdmin fetch/parse error:", error);
+//         throw error;
+//     }
+// }
+//
+// // Xóa đơn hàng (Admin)
+// export async function xoaDonHangAdmin(maDonHang: number): Promise<void> { // <<< DÙNG TÊN NÀY
+//     const token = getToken();
+//     if (!token) throw new Error("Yêu cầu quyền Admin.");
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     try {
+//         const response = await fetch(url, {
+//             method: "DELETE",
+//             headers: { 'Authorization': `Bearer ${token}` }
+//         });
+//         if (!response.ok && response.status !== 204) {
+//             const errorData = await response.json().catch(()=>({message: `Lỗi ${response.status}`}));
+//             throw new Error(errorData.noiDung || errorData.message || `Lỗi ${response.status} khi xóa đơn hàng.`);
+//         }
+//     } catch (error) {
+//         console.error("[API] xoaDonHangAdmin fetch error:", error);
+//         throw error;
+//     }
+// }
+
 import DonHangModel from "../models/DonHangModel";
 
-const getToken = () => localStorage.getItem('token');
+const getToken = () => localStorage.getItem("token");
+const authHeaders = (): HeadersInit => {
+    const t = getToken();
+    if (!t) throw new Error("Bạn cần đăng nhập.");
+    return { Authorization: `Bearer ${t}`, "Content-Type": "application/json" };
+};
 
-// Hàm cho USER xem đơn hàng của mình
+/* ========================= USER ========================= */
+
+// Lịch sử đơn hàng của user hiện tại
 export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
-    const token = getToken();
-    if (!token) throw new Error("Bạn cần đăng nhập để xem đơn hàng.");
-    const url = 'http://localhost:8080/don-hang/my-orders';
-    try {
-        const response = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` }});
-        if (!response.ok) {
-            const errorText = await response.text().catch(() => `Lỗi ${response.status}`);
-            throw new Error(errorText || `Lỗi ${response.status} khi lấy lịch sử đơn hàng`);
-        }
-        const data: DonHangModel[] = await response.json();
-        return data;
-    } catch(error) {
-        console.error("[API] layDonHangCuaToi fetch/parse error:", error);
-        throw error;
+    const url = "http://localhost:8080/don-hang/my-orders"; // <-- giữ nguyên theo BE của bạn
+    const res = await fetch(url, { method: "GET", headers: authHeaders() });
+    if (!res.ok) {
+        const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+        throw new Error(txt || `Lỗi ${res.status} khi lấy lịch sử đơn hàng`);
     }
+    const data = (await res.json()) as DonHangModel[];
+    // sort mới nhất lên đầu (nếu BE chưa sort)
+    data.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+    return data;
 }
 
-// === CÁC HÀM CHO ADMIN ===
+// (tuỳ chọn) chi tiết 1 đơn cho user
+export async function layChiTietDonHang(maDonHang: number): Promise<DonHangModel> {
+    const url = `http://localhost:8080/don-hang/${maDonHang}`;
+    const res = await fetch(url, { method: "GET", headers: authHeaders() });
+    if (!res.ok) {
+        const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+        throw new Error(txt || `Không tải được chi tiết đơn`);
+    }
+    return (await res.json()) as DonHangModel;
+}
+
+/* ========================= ADMIN ========================= */
 
 // Lấy tất cả đơn hàng (Admin)
-export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> { // <<< DÙNG TÊN NÀY
-    const token = getToken();
-    if (!token) throw new Error("Yêu cầu quyền Admin.");
+export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> {
     const url = "http://localhost:8080/don-hang";
-    try {
-        const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-        if (!response.ok) throw new Error(`Lỗi ${response.status} khi lấy tất cả đơn hàng.`);
-        const data = await response.json();
-        return data._embedded?.donHangs || (Array.isArray(data) ? data : []);
-    } catch(error) {
-        console.error("[API] layToanBoDonHangAdmin fetch/parse error:", error);
-        throw error;
-    }
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) throw new Error(`Lỗi ${res.status} khi lấy tất cả đơn hàng.`);
+    const data = await res.json();
+    // Nếu BE trả HAL (_embedded), rút mảng ra; nếu trả array thì trả thẳng
+    return data?._embedded?.donHangs || (Array.isArray(data) ? data : []);
 }
 
-// Cập nhật trạng thái đơn hàng (Admin/Staff) - Ví dụ
-export async function capNhatTrangThaiDonHangAdmin(maDonHang: number, trangThaiMoi: string): Promise<DonHangModel> { // <<< DÙNG TÊN NÀY (Hoặc tên hàm cập nhật khác bạn tạo)
-    const token = getToken();
-    if (!token) throw new Error("Yêu cầu quyền Admin/Staff.");
+// Cập nhật trạng thái đơn (Admin/Staff)
+export async function capNhatTrangThaiDonHangAdmin(
+    maDonHang: number,
+    trangThaiMoi: string
+): Promise<DonHangModel> {
     const url = `http://localhost:8080/don-hang/${maDonHang}`;
-    try {
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ trangThai: trangThaiMoi }),
-        });
-        if (!response.ok) {
-            const errorData = await response.json().catch(()=>({message: `Lỗi ${response.status}`}));
-            throw new Error(errorData.noiDung || errorData.message || `Lỗi ${response.status} khi cập nhật đơn hàng.`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("[API] capNhatTrangThaiDonHangAdmin fetch/parse error:", error);
-        throw error;
+    const res = await fetch(url, {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ trangThai: trangThaiMoi }),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+        throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi cập nhật đơn hàng.`);
     }
+    return (await res.json()) as DonHangModel;
 }
 
-// Xóa đơn hàng (Admin)
-export async function xoaDonHangAdmin(maDonHang: number): Promise<void> { // <<< DÙNG TÊN NÀY
-    const token = getToken();
-    if (!token) throw new Error("Yêu cầu quyền Admin.");
+// Xoá đơn (Admin)
+export async function xoaDonHangAdmin(maDonHang: number): Promise<void> {
     const url = `http://localhost:8080/don-hang/${maDonHang}`;
-    try {
-        const response = await fetch(url, {
-            method: "DELETE",
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok && response.status !== 204) {
-            const errorData = await response.json().catch(()=>({message: `Lỗi ${response.status}`}));
-            throw new Error(errorData.noiDung || errorData.message || `Lỗi ${response.status} khi xóa đơn hàng.`);
-        }
-    } catch (error) {
-        console.error("[API] xoaDonHangAdmin fetch error:", error);
-        throw error;
+    const res = await fetch(url, { method: "DELETE", headers: authHeaders() });
+    if (!res.ok && res.status !== 204) {
+        const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+        throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi xóa đơn hàng.`);
     }
 }
-
-// --- Bỏ các hàm không dùng hoặc sai ---

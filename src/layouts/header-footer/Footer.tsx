@@ -18,7 +18,7 @@
 //                         <ul className="nav flex-column">
 //                             <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-body-secondary">Điều khoản sử dụng</a></li>
 //                             <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-body-secondary">Chính sách bảo mật thông tin cá nhân</a></li>
-//                             <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-body-secondary">Giới thiệu về YoungSan</a></li>
+//                             <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-body-secondary">Giới thiệu về Miracles</a></li>
 //                         </ul>
 //                     </div>
 //
@@ -48,7 +48,7 @@
 //
 //
 //                 <div className="text-start mt-4"> {/* Thêm text-start và có thể thêm khoảng cách trên mt-4 */}
-//                     <p className="mb-1"> <b> Cửa hàng sách YoungSan </b> </p> {/* Giảm margin bottom của p */}
+//                     <p className="mb-1"> <b> Cửa hàng sách Miracles </b> </p> {/* Giảm margin bottom của p */}
 //                     <p className="small text-muted mb-0">314B Lê Văn Sỹ </p> {/* Thêm text-muted, giảm margin */}
 //                 </div>
 //
@@ -101,7 +101,7 @@ function Footer() {
                             {/* Trỏ đến file HTML trong public/ */}
                             <li className="nav-item mb-2"><a href="/dieu-khoan-su-dung.html" className="nav-link p-0 text-body-secondary">Điều khoản sử dụng</a></li>
                             <li className="nav-item mb-2"><a href="/chinh-sach-bao-mat.html" className="nav-link p-0 text-body-secondary">Chính sách bảo mật</a></li>
-                            <li className="nav-item mb-2"><a href="/gioi-thieu.html" className="nav-link p-0 text-body-secondary">Giới thiệu về YoungSan</a></li>
+                            <li className="nav-item mb-2"><a href="/gioi-thieu.html" className="nav-link p-0 text-body-secondary">Giới thiệu về Miracles</a></li>
                         </ul>
                     </div>
 

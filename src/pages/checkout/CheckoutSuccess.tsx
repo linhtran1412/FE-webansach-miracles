@@ -8,7 +8,7 @@ const CheckoutSuccess: React.FC = () => {
         <div className="container mt-5 mb-5 text-center">
             <div className="alert alert-success" role="alert">
                 <h4 className="alert-heading">Đặt hàng thành công!</h4>
-                <p>Cảm ơn bạn đã mua hàng tại YoungSan Bookstore.</p>
+                <p>Cảm ơn bạn đã mua hàng tại Miracles Bookstore.</p>
                 {maDonHang && (
                     <p className="mb-0">Mã đơn hàng của bạn là: <strong>#{maDonHang}</strong></p>
                 )}
