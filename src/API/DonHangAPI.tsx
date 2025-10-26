@@ -407,52 +407,399 @@
 //     }
 // }
 
+// import DonHangModel from "../models/DonHangModel";
+//
+// const getToken = () => localStorage.getItem("token");
+// const authHeaders = (): HeadersInit => {
+//     const t = getToken();
+//     if (!t) throw new Error("Bạn cần đăng nhập.");
+//     return { Authorization: `Bearer ${t}`, "Content-Type": "application/json" };
+// };
+//
+// /* ========================= USER ========================= */
+//
+// // Lịch sử đơn hàng của user hiện tại
+// export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
+//     const url = "http://localhost:8080/don-hang/my-orders"; // <-- giữ nguyên theo BE của bạn
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Lỗi ${res.status} khi lấy lịch sử đơn hàng`);
+//     }
+//     const data = (await res.json()) as DonHangModel[];
+//     // sort mới nhất lên đầu (nếu BE chưa sort)
+//     data.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+//     return data;
+// }
+//
+// // (tuỳ chọn) chi tiết 1 đơn cho user
+// export async function layChiTietDonHang(maDonHang: number): Promise<DonHangModel> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Không tải được chi tiết đơn`);
+//     }
+//     return (await res.json()) as DonHangModel;
+// }
+//
+// /* ========================= ADMIN ========================= */
+//
+// // Lấy tất cả đơn hàng (Admin)
+// export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> {
+//     const url = "http://localhost:8080/don-hang";
+//     const res = await fetch(url, { headers: authHeaders() });
+//     if (!res.ok) throw new Error(`Lỗi ${res.status} khi lấy tất cả đơn hàng.`);
+//     const data = await res.json();
+//     // Nếu BE trả HAL (_embedded), rút mảng ra; nếu trả array thì trả thẳng
+//     return data?._embedded?.donHangs || (Array.isArray(data) ? data : []);
+// }
+//
+// // Cập nhật trạng thái đơn (Admin/Staff)
+// export async function capNhatTrangThaiDonHangAdmin(
+//     maDonHang: number,
+//     trangThaiMoi: string
+// ): Promise<DonHangModel> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await fetch(url, {
+//         method: "PUT",
+//         headers: authHeaders(),
+//         body: JSON.stringify({ trangThai: trangThaiMoi }),
+//     });
+//     if (!res.ok) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi cập nhật đơn hàng.`);
+//     }
+//     return (await res.json()) as DonHangModel;
+// }
+//
+// // Xoá đơn (Admin)
+// export async function xoaDonHangAdmin(maDonHang: number): Promise<void> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await fetch(url, { method: "DELETE", headers: authHeaders() });
+//     if (!res.ok && res.status !== 204) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi xóa đơn hàng.`);
+//     }
+// }
+
+
+
+// // src/API/DonHangAPI.tsx
+// import DonHangModel from "../models/DonHangModel";
+//
+// /* ========= Types cho trang CHI TIẾT đơn hàng (DTO BE trả về) ========= */
+// export interface ChiTietDonHangDTO {
+//     maSach: number;
+//     tenSach: string;
+//     soLuong: number;
+//     giaBan: number;        // đơn giá tại thời điểm mua
+//     thanhTien: number;     // soLuong * giaBan
+//     hinhAnhDaiDien?: string;
+// }
+//
+// export interface DonHangDetailDTO {
+//     maDonHang: number;
+//     ngayTao?: string;          // ISO hoặc yyyy-MM-dd
+//     diaChiMuaHang?: string;
+//     diaChiNhanHang?: string;
+//     hinhThucThanhToan?: string;
+//     hinhThucGiaoHang?: string;
+//     tongTienSanPham: number;
+//     chiPhiGiaoHang: number;
+//     chiPhiThanhToan: number;
+//     tongTien: number;
+//     trangThai?: string;
+//     chiTiet: ChiTietDonHangDTO[];
+// }
+//
+// /* ========================= TOKEN / HEADERS ========================= */
+// const getToken = () => localStorage.getItem("token");
+// const authHeaders = (): HeadersInit => {
+//     const t = getToken();
+//     if (!t) throw new Error("Bạn cần đăng nhập.");
+//     // Content-Type chỉ cần khi có body JSON (POST/PUT). GET/DELETE không bắt buộc.
+//     return { Authorization: `Bearer ${t}` };
+// };
+// const authJsonHeaders = (): HeadersInit => ({
+//     ...authHeaders(),
+//     "Content-Type": "application/json",
+// });
+//
+// /* ========================= USER ========================= */
+//
+// /** Lịch sử đơn hàng của user hiện tại (DTO list) */
+// export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
+//     const url = "http://localhost:8080/don-hang/my-orders"; // BE của bạn
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Lỗi ${res.status} khi lấy lịch sử đơn hàng`);
+//     }
+//     const data = (await res.json()) as DonHangModel[];
+//     // sort mới nhất lên đầu (phòng khi BE chưa sort)
+//     data.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+//     return data;
+// }
+//
+// /** 🔹 Chi tiết 1 đơn của CHÍNH USER (an toàn quyền sở hữu) */
+// export async function layChiTietDonHangCuaToi(
+//     maDonHang: number
+// ): Promise<DonHangDetailDTO> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}/my-detail`;
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Không tải được chi tiết đơn`);
+//     }
+//     return (await res.json()) as DonHangDetailDTO;
+// }
+//
+// /** (Tuỳ chọn) Chi tiết bằng endpoint admin (KHÔNG khuyến nghị cho user) */
+// export async function layChiTietDonHang_AdminView(
+//     maDonHang: number
+// ): Promise<DonHangModel> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Không tải được chi tiết đơn (admin view)`);
+//     }
+//     return (await res.json()) as DonHangModel;
+// }
+//
+// /* ========================= ADMIN ========================= */
+//
+// /** Lấy tất cả đơn hàng (Admin) */
+// export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> {
+//     const url = "http://localhost:8080/don-hang";
+//     const res = await fetch(url, { headers: authHeaders() });
+//     if (!res.ok) throw new Error(`Lỗi ${res.status} khi lấy tất cả đơn hàng.`);
+//     const data = await res.json();
+//     // Nếu BE trả HAL (_embedded), rút mảng ra; nếu trả array thì trả thẳng
+//     return data?._embedded?.donHangs || (Array.isArray(data) ? data : []);
+// }
+//
+// /** Cập nhật trạng thái đơn (Admin/Staff) */
+// export async function capNhatTrangThaiDonHangAdmin(
+//     maDonHang: number,
+//     trangThaiMoi: string
+// ): Promise<DonHangModel> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await fetch(url, {
+//         method: "PUT",
+//         headers: authJsonHeaders(),
+//         body: JSON.stringify({ trangThai: trangThaiMoi }),
+//     });
+//     if (!res.ok) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi cập nhật đơn hàng.`);
+//     }
+//     return (await res.json()) as DonHangModel;
+// }
+//
+// /** Xoá đơn (Admin) */
+// export async function xoaDonHangAdmin(maDonHang: number): Promise<void> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}`;
+//     const res = await resTry(url);
+//     if (!res.ok && res.status !== 204) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi xóa đơn hàng.`);
+//     }
+// }
+//
+// /* ========================= Helpers ========================= */
+// async function resTry(url: string) {
+//     return fetch(url, { method: "DELETE", headers: authHeaders() });
+// }
+
+
+// import DonHangModel from "../models/DonHangModel";
+//
+// /* ========= Types cho trang CHI TIẾT đơn hàng (DTO BE trả về) ========= */
+// export interface ChiTietDonHangDTO {
+//     maSach: number;
+//     tenSach: string;
+//     soLuong: number;
+//     giaBan: number;
+//     thanhTien: number;
+//     hinhAnhDaiDien?: string;
+// }
+//
+// export interface DonHangDetailDTO {
+//     maDonHang: number;
+//     ngayTao?: string;
+//     diaChiMuaHang?: string;
+//     diaChiNhanHang?: string;
+//     hinhThucThanhToan?: string;
+//     hinhThucGiaoHang?: string;
+//     tongTienSanPham: number;
+//     chiPhiGiaoHang: number;
+//     chiPhiThanhToan: number;
+//     tongTien: number;
+//     trangThai?: string;
+//     chiTiet: ChiTietDonHangDTO[];
+// }
+//
+// /* ========================= TOKEN / HEADERS ========================= */
+// const getToken = () => localStorage.getItem("token");
+// const authHeaders = (): HeadersInit => {
+//     const t = getToken();
+//     if (!t) throw new Error("Bạn cần đăng nhập.");
+//     return { Authorization: `Bearer ${t}` };
+// };
+// const authJsonHeaders = (): HeadersInit => ({
+//     ...authHeaders(),
+//     "Content-Type": "application/json",
+// });
+//
+// /* ========================= USER ========================= */
+//
+// // Lịch sử đơn hàng của user hiện tại
+// export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
+//     const url = "http://localhost:8080/don-hang/my-orders";
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Lỗi ${res.status} khi lấy lịch sử đơn hàng`);
+//     }
+//     const data = (await res.json()) as DonHangModel[];
+//     data.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+//     return data;
+// }
+//
+// // Chi tiết 1 đơn của CHÍNH USER
+// export async function layChiTietDonHangCuaToi(maDonHang: number): Promise<DonHangDetailDTO> {
+//     const url = `http://localhost:8080/don-hang/${maDonHang}/my-detail`;
+//     const res = await fetch(url, { method: "GET", headers: authHeaders() });
+//     if (!res.ok) {
+//         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
+//         throw new Error(txt || `Không tải được chi tiết đơn`);
+//     }
+//     return (await res.json()) as DonHangDetailDTO;
+// }
+//
+// /* ========================= ADMIN ========================= */
+//
+// // Lấy tất cả đơn hàng (ép size lớn + sort để tránh phân trang)
+// export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> {
+//     //const url = "http://localhost:8080/don-hang?size=1000&sort=maDonHang,desc";
+//     const url = `http://localhost:8080/api/admin/don-hang`;
+//     const res = await fetch(url, { headers: authHeaders() });
+//     if (!res.ok) throw new Error(`Lỗi ${res.status} khi lấy tất cả đơn hàng.`);
+//     const data = await res.json();
+//     const list: DonHangModel[] = data?._embedded?.donHangs || (Array.isArray(data) ? data : []);
+//     list.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+//     return list;
+// }
+//
+// // Cập nhật trạng thái đơn (Admin/Staff)
+// export async function capNhatTrangThaiDonHangAdmin(
+//     maDonHang: number,
+//     trangThaiMoi: string
+// ): Promise<DonHangModel> {
+//     const url = `http://localhost:8080/api/admin/don-hang/${maDonHang}`;
+//     const res = await fetch(url, {
+//         method: "PUT",
+//         headers: authJsonHeaders(),
+//         body: JSON.stringify({ trangThai: trangThaiMoi }),
+//     });
+//     if (!res.ok) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi cập nhật đơn hàng.`);
+//     }
+//     return (await res.json()) as DonHangModel;
+// }
+//
+// // Xoá đơn (Admin)
+// export async function xoaDonHangAdmin(maDonHang: number): Promise<void> {
+//     const url = `http://localhost:8080/api/admin/don-hang/${maDonHang}`;
+//     const res = await fetch(url, { method: "DELETE", headers: authHeaders() });
+//     if (!res.ok && res.status !== 204) {
+//         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));
+//         throw new Error(err.noiDung || err.message || `Lỗi ${res.status} khi xóa đơn hàng.`);
+//     }
+// }
+
+
+
+
 import DonHangModel from "../models/DonHangModel";
 
+/* ========= Types cho trang CHI TIẾT đơn hàng (DTO BE trả về) ========= */
+export interface ChiTietDonHangDTO {
+    maSach: number;
+    tenSach: string;
+    soLuong: number;
+    giaBan: number;
+    thanhTien: number;
+    hinhAnhDaiDien?: string;
+}
+
+export interface DonHangDetailDTO {
+    maDonHang: number;
+    ngayTao?: string;
+    diaChiMuaHang?: string;
+    diaChiNhanHang?: string;
+    hinhThucThanhToan?: string;
+    hinhThucGiaoHang?: string;
+    tongTienSanPham: number;
+    chiPhiGiaoHang: number;
+    chiPhiThanhToan: number;
+    tongTien: number;
+    trangThai?: string;
+    chiTiet: ChiTietDonHangDTO[];
+}
+
+/* ========================= TOKEN / HEADERS ========================= */
 const getToken = () => localStorage.getItem("token");
 const authHeaders = (): HeadersInit => {
     const t = getToken();
     if (!t) throw new Error("Bạn cần đăng nhập.");
-    return { Authorization: `Bearer ${t}`, "Content-Type": "application/json" };
+    return { Authorization: `Bearer ${t}`, Accept: "application/json" };
 };
+const authJsonHeaders = (): HeadersInit => ({
+    ...authHeaders(),
+    "Content-Type": "application/json",
+});
 
 /* ========================= USER ========================= */
 
 // Lịch sử đơn hàng của user hiện tại
 export async function layDonHangCuaToi(): Promise<DonHangModel[]> {
-    const url = "http://localhost:8080/don-hang/my-orders"; // <-- giữ nguyên theo BE của bạn
+    const url = "http://localhost:8080/don-hang/my-orders";
     const res = await fetch(url, { method: "GET", headers: authHeaders() });
     if (!res.ok) {
         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
         throw new Error(txt || `Lỗi ${res.status} khi lấy lịch sử đơn hàng`);
     }
     const data = (await res.json()) as DonHangModel[];
-    // sort mới nhất lên đầu (nếu BE chưa sort)
     data.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
     return data;
 }
 
-// (tuỳ chọn) chi tiết 1 đơn cho user
-export async function layChiTietDonHang(maDonHang: number): Promise<DonHangModel> {
-    const url = `http://localhost:8080/don-hang/${maDonHang}`;
+// Chi tiết 1 đơn của CHÍNH USER
+export async function layChiTietDonHangCuaToi(maDonHang: number): Promise<DonHangDetailDTO> {
+    const url = `http://localhost:8080/don-hang/${maDonHang}/my-detail`;
     const res = await fetch(url, { method: "GET", headers: authHeaders() });
     if (!res.ok) {
         const txt = await res.text().catch(() => `Lỗi ${res.status}`);
         throw new Error(txt || `Không tải được chi tiết đơn`);
     }
-    return (await res.json()) as DonHangModel;
+    return (await res.json()) as DonHangDetailDTO;
 }
 
 /* ========================= ADMIN ========================= */
 
-// Lấy tất cả đơn hàng (Admin)
+// Lấy tất cả đơn hàng (BE trả mảng thuần; vẫn fallback HAL nếu sau này đổi ý)
 export async function layToanBoDonHangAdmin(): Promise<DonHangModel[]> {
-    const url = "http://localhost:8080/don-hang";
+    const url = `http://localhost:8080/api/admin/don-hang`;
     const res = await fetch(url, { headers: authHeaders() });
     if (!res.ok) throw new Error(`Lỗi ${res.status} khi lấy tất cả đơn hàng.`);
     const data = await res.json();
-    // Nếu BE trả HAL (_embedded), rút mảng ra; nếu trả array thì trả thẳng
-    return data?._embedded?.donHangs || (Array.isArray(data) ? data : []);
+    const list: DonHangModel[] = Array.isArray(data) ? data : (data?._embedded?.donHangs || []);
+    list.sort((a, b) => (b.maDonHang ?? 0) - (a.maDonHang ?? 0));
+    return list;
 }
 
 // Cập nhật trạng thái đơn (Admin/Staff)
@@ -460,10 +807,10 @@ export async function capNhatTrangThaiDonHangAdmin(
     maDonHang: number,
     trangThaiMoi: string
 ): Promise<DonHangModel> {
-    const url = `http://localhost:8080/don-hang/${maDonHang}`;
+    const url = `http://localhost:8080/api/admin/don-hang/${maDonHang}`;
     const res = await fetch(url, {
         method: "PUT",
-        headers: authHeaders(),
+        headers: authJsonHeaders(),
         body: JSON.stringify({ trangThai: trangThaiMoi }),
     });
     if (!res.ok) {
@@ -475,7 +822,7 @@ export async function capNhatTrangThaiDonHangAdmin(
 
 // Xoá đơn (Admin)
 export async function xoaDonHangAdmin(maDonHang: number): Promise<void> {
-    const url = `http://localhost:8080/don-hang/${maDonHang}`;
+    const url = `http://localhost:8080/api/admin/don-hang/${maDonHang}`;
     const res = await fetch(url, { method: "DELETE", headers: authHeaders() });
     if (!res.ok && res.status !== 204) {
         const err = await res.json().catch(() => ({ message: `Lỗi ${res.status}` }));

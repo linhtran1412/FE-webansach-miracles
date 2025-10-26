@@ -20,14 +20,10 @@ export interface HinhThucGiaoHangModel {
     chiPhiGiaoHang: number;
 }
 
-export interface HinhThucThanhToanModel {
-    // === SỬA CÁC KEY Ở ĐÂY cho khớp với JSON API ===
-    maHinhThucGiaoHang: number; // ID đang trả về với key này
-    tenHinhThucGiaoHang: string; // Tên đang trả về với key này
-    moTa: string;                // Key này đúng rồi
-    chiPhiGiaoHang: number;    // Phí đang trả về với key này
-    // === KẾT THÚC SỬA ===
 
-    // Bạn có thể thêm các trường khác nếu API trả về, ví dụ:
-    // danhSachDonHang?: any[]; // Nếu không dùng thì có thể bỏ qua
+export interface HinhThucThanhToanModel {
+    maHinhThucThanhToan: number;   // ✅ ĐÚNG
+    tenHinhThucThanhToan: string;  // ✅ ĐÚNG
+    moTa: string;
+    chiPhiThanhToan: number;       // ✅ ĐÚNG
 }

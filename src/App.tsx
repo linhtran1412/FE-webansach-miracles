@@ -575,6 +575,8 @@ import CheckoutAddress from './pages/checkout/CheckoutAddress';
 import CheckoutShipping from './pages/checkout/CheckoutShipping';
 import CheckoutPayment from './pages/checkout/CheckoutPayment';
 import CheckoutSuccess from './pages/checkout/CheckoutSuccess';
+import DonHangDetail from "./layouts/nguoiDung/DonHangDetail";
+
 
 // --- Import Pages/Components Admin ---
 import DanhSachSanPhamAD from "./LayoutAD/products/danhSachSanPham"; // Trang chính admin
@@ -633,7 +635,8 @@ const AppContent = () => {
                     <Route path='/dat-hang-thanh-cong/:maDonHang' element={isUserLoggedIn ? <CheckoutSuccess /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/tai-khoan/don-hang' element={isUserLoggedIn ? <DonHangList isAdmin={false} /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     <Route path='/tai-khoan/ho-so' element={isUserLoggedIn ? <TaiKhoanHoSo /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
-
+                    <Route path="/tai-khoan/don-hang" element={<DonHangList />} />
+                    <Route path="/tai-khoan/don-hang/:id" element={<DonHangDetail />} />
                     {/* === THÊM ROUTE YÊU THÍCH === */}
                     <Route path='/tai-khoan/yeu-thich' element={isUserLoggedIn ? <YeuThichPage /> : <Navigate to="/dang-nhap" state={{ from: location }} replace />} />
                     {/* === KẾT THÚC THÊM ROUTE YÊU THÍCH === */}
@@ -646,6 +649,7 @@ const AppContent = () => {
                             <Route path='sach/:maSach' element={<ChiTietSanPhamAD />} /> {/* <<< Dùng component ChiTietSanPhamAD Admin */}
                             <Route path='cap-nhat/:maSach' element={<SachUpdate />} />
                             <Route path='don-hang' element={<QuanLyDonHangList />} />
+                            <Route path='don-hang/:id' element={<DonHangDetail />} />
                             <Route path='bao-cao' element={isStrictlyAdmin ? <ReportsPage /> : <Navigate to="/admin" replace />} />
                         </Route>
                     )}
